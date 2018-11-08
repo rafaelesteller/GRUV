@@ -81,6 +81,7 @@ def convert_np_audio_to_sample_blocks(song_np, block_size):
 		block = song_np[num_samples_so_far:num_samples_so_far+block_size]
 		if(block.shape[0] < block_size):
 			padding = np.zeros((block_size - block.shape[0],))
+			print("this should not run if it does it means line of 0s. line 83 in parse_files.py")
 			block = np.concatenate((block, padding))
 		block_lists.append(block)
 		num_samples_so_far += block_size
@@ -133,6 +134,8 @@ def convert_wav_files_to_nptensor(directory, block_size, max_seq_len, out_file, 
 			chunks_Y.append(Y[cur_seq:cur_seq+max_seq_len])
 			cur_seq += max_seq_len
 	num_examples = len(chunks_X)
+	print "chunks x"
+	print chunks_X
 	num_dims_out = block_size * 2
 	if(useTimeDomain):
 		num_dims_out = block_size

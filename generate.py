@@ -12,7 +12,7 @@ config = nn_config.get_neural_net_configuration()
 sample_frequency = config['sampling_frequency']
 inputFile = config['model_file']
 model_basename = config['model_basename']
-cur_iter = 25
+cur_iter = 50
 model_filename = model_basename + str(cur_iter)
 output_filename = './generated_song.wav'
 
@@ -29,7 +29,7 @@ X_var = np.load(inputFile + '_var.npy')
 print ('Finished loading training data')
 
 #Figure out how many frequencies we have in the data
-freq_space_dims = X_train.shape[2]
+freq_space_dims = X_train.shape[1:]
 hidden_dims = config['hidden_dimension_size']
 
 #Creates a lstm network
@@ -54,9 +54,16 @@ print ('Starting generation!')
 seed_len = 1
 seed_seq = seed_generator.generate_copy_seed_sequence(seed_length=seed_len, training_data=X_train)
 
-max_seq_len = 10; #Defines how long the final song is. Total song length in samples = max_seq_len * example_len
+max_seq_len = 6; #Defines how long the final song is. Total song length in samples = max_seq_len * example_len
+
+output = []
+for i in xrange(seed_seq.shape[1]):
+				output.append(seed_seq[0][i].copy())
+save_generated_example("input.wav", output, sample_frequency=sample_frequency)
 output = sequence_generator.generate_from_seed(model=model, seed=seed_seq, 
 	sequence_length=max_seq_len, data_variance=X_var, data_mean=X_mean)
+
+print( len(output))
 print ('Finished generation!')
 
 #Save the generated sequence to a WAV file

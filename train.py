@@ -20,7 +20,8 @@ y_train = np.load(inputFile + '_y.npy')
 print ('Finished loading training data')
 
 #Figure out how many frequencies we have in the data
-freq_space_dims = X_train.shape[2]
+print("Xtrain freq: %s" % (str(X_train.shape)))
+freq_space_dims = X_train.shape[1:]
 hidden_dims = config['hidden_dimension_size']
 
 #Creates a lstm network
