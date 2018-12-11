@@ -23,6 +23,8 @@ print ('Loading training data')
 #X_mean is a matrix of size (num_frequency_dims,) containing the mean for each frequency dimension
 #X_var is a matrix of size (num_frequency_dims,) containing the variance for each frequency dimension
 X_train = np.load(inputFile + '_x.npy')
+print( X_train.shape)
+print( type(X_train))
 y_train = np.load(inputFile + '_y.npy')
 X_mean = np.load(inputFile + '_mean.npy')
 X_var = np.load(inputFile + '_var.npy')
@@ -36,7 +38,7 @@ hidden_dims = config['hidden_dimension_size']
 model = network_utils.create_lstm_network(num_frequency_dimensions=freq_space_dims, num_hidden_dimensions=hidden_dims)
 #You could also substitute this with a RNN or GRU
 #model = network_utils.create_gru_network()
-
+print( model_filename)
 #Load existing weights if available
 if os.path.isfile(model_filename):
 	model.load_weights(model_filename)
@@ -52,14 +54,25 @@ print ('Starting generation!')
 #There are many, many ways we can pick these seed sequences such as taking linear combinations of certain songs
 #We could even provide a uniformly random sequence, but that is highly unlikely to produce good results
 seed_len = 1
-seed_seq = seed_generator.generate_copy_seed_sequence(seed_length=seed_len, training_data=X_train)
+block_size = X_train.shape[2] / 2
 
+
+seed_seq = seed_generator.generate_from_file(
+                         filename="datasets/YourMusicLibrary/OnlineSongs.wav",
+                         seed_length = 1,
+                         block_size = block_size, 
+                         seq_len = 40, 
+                         std = X_var,
+                         mean = X_mean,
+                         fft = True)
+seed_seq = seed_generator.generate_copy_seed_sequence(seed_length=seed_len, training_data=X_train)
 max_seq_len = 6; #Defines how long the final song is. Total song length in samples = max_seq_len * example_len
 
 output = []
 for i in xrange(seed_seq.shape[1]):
 				output.append(seed_seq[0][i].copy())
-save_generated_example("input.wav", output, sample_frequency=sample_frequency)
+save_generated_example("input.wav", output, sample_frequency=sample_frequency, useTimeDomain=False)
+
 output = sequence_generator.generate_from_seed(model=model, seed=seed_seq, 
 	sequence_length=max_seq_len, data_variance=X_var, data_mean=X_mean)
 
@@ -67,4 +80,4 @@ print( len(output))
 print ('Finished generation!')
 
 #Save the generated sequence to a WAV file
-save_generated_example(output_filename, output, sample_frequency=sample_frequency)
+save_generated_example(output_filename, output, sample_frequency=sample_frequency, useTimeDomain=False)

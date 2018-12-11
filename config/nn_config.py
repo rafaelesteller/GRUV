@@ -5,9 +5,9 @@ def get_neural_net_configuration():
 	#For best results, this should be >= freq_space_dims, but most consumer GPUs can't handle large sizes
 	nn_params['hidden_dimension_size'] = 1024
 	#The weights filename for saving/loading trained models
-	nn_params['model_basename'] = './YourMusicLibraryNPWeights'
+	nn_params['model_basename'] = './TOYPAJ-NPWeights'
 	#The model filename for the training data
-	nn_params['model_file'] = './datasets/YourMusicLibraryNP'
+	nn_params['model_file'] = './datasets/YourMusicLibrary/TOYPAYJ-Processed'
 	#The dataset directory
 	nn_params['dataset_directory'] = './datasets/YourMusicLibrary/'
 	return nn_params
